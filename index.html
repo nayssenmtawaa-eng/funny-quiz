@@ -149,14 +149,14 @@
             question: "1/ chkoun loul 8eme 3amnawel?",
             type: "mcq",
             options: ["a/ nyssen", "b/ malak", "c/ ma3dnousa"],
-            correct: [0], // a
+            correct: [0],
             correctText: "a/ nyssen"
         },
         {
             question: "2/ chkoun ydh7ekk fil 9ism?",
             type: "mcq",
             options: ["a/ ma3dnousa", "b/ fticha", "c/ 7ad"],
-            correct: [0, 2], // a, c
+            correct: [0, 2],
             correctText: "a/ ma3dnousa OR c/ 7ad"
         },
         {
@@ -169,7 +169,7 @@
             question: "4/ chkoun bent fatma?",
             type: "mcq",
             options: ["a/ tasnime", "b/ nour", "c/ nourane"],
-            correct: [1], // b
+            correct: [1],
             correctText: "b/ nour"
         },
         {
@@ -182,28 +182,28 @@
             question: "6/ nour kenn jett jamadd ach tkoun?",
             type: "mcq",
             options: ["a/ taboureya", "b/ debouza fitox", "c/ charge"],
-            correct: [0, 1, 2], // a, b, c
+            correct: [0, 1, 2],
             correctText: "الخيارات الكل صحيحة"
         },
         {
             question: "7/ chkoun li dima yelbess cha3che3i w jmi33 libsett rabi?",
             type: "mcq",
             options: ["a/ ma3dnousaa", "b/ ritejj", "c/ saja"],
-            correct: [2], // c
+            correct: [2],
             correctText: "c/ saja"
         },
         {
             question: "8/ chkoun a9serr wa7da fi college?",
             type: "mcq",
             options: ["a/ tasnime", "b/ tasnime", "c/ tasnime"],
-            correct: [0, 1, 2], // a, b, c
+            correct: [0, 1, 2],
             correctText: "tasnime"
         },
         {
             question: "9/ chkouni lil awledd ekol y5afou منها?",
             type: "mcq",
             options: ["a/ selam", "b/ nourane", "c/ moudira"],
-            correct: [0, 2], // a, c
+            correct: [0, 2],
             correctText: "a/ selam OR c/ moudira"
         }
     ];
@@ -260,7 +260,7 @@
         const currentData = quizData[currentQuestion];
         let isCorrect = false;
 
-        if (currentData.type === "mcq" && currentData.correct.includes(optionIndex)) {
+        if (currentData.type === "mcq" && currentData.correct && currentData.correct.includes(optionIndex)) {
             score++;
             isCorrect = true;
         }
@@ -335,13 +335,20 @@
 
     function toggleCorrectAnswers() {
         const box = document.getElementById('correct-answers-box');
-        if (box.style.display === 'block') {
-            box.style.display = 'none';
-        } else {
-            box.style.display = 'block';
+        if (box) {
+            if (box.style.display === 'block') {
+                box.style.display = 'none';
+            } else {
+                box.style.display = 'block';
+            }
         }
     }
+
+    // تشغيل الكويز عند تحميل الصفحة
+    window.onload = function() {
+        loadQuiz();
+    };
 </script>
 
 </body>
-</html> 
+</html>
