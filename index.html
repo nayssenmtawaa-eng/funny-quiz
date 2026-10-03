@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funny Quiz - اختبار الصحاب</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0d0b26;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .quiz-card {
+            background: #18153d;
+            border: 2px solid #5d46e2;
+            border-radius: 16px;
+            padding: 25px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 8px 24px rgba(93, 70, 226, 0.3);
+            text-align: center;
+        }
+        .question-box {
+            background: linear-gradient(135deg, #1f1a52, #100b33);
+            border: 1px solid #7a5af8;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 25px;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            direction: ltr;
+        }
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+        .btn-option {
+            background-color: #26205b;
+            color: #ffffff;
+            border: 1px solid #4838b0;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            direction: ltr;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .btn-option:hover {
+            background-color: #5d46e2;
+            border-color: #9b87f5;
+        }
+        .input-box {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #7a5af8;
+            background: #100b33;
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            direction: ltr;
+        }
+        .btn-submit {
+            background-color: #5d46e2;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        .btn-submit:hover {
+            background-color: #7a5af8;
+        }
+        .score-box {
+            font-size: 1.5rem;
+            color: #4cd964;
+            margin-bottom: 20px;
+        }
+        .answers-list {
+            text-align: left;
+            direction: ltr;
+            background: #100b33;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-card" id="quiz-card">
+    <div class="question-box" id="question">جاري تحميل السؤال...</div>
+    <div id="content-area"></div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            question: "1/ chkoun loul 8eme 3amnawel?",
+            type: "mcq",
+            options: ["a/ nyssen", "b/ malak", "c/ ma3dnousa"],
+            correct: [0] // a
+        },
+        {
+            question: "2/ chkoun ydh7ekk fil 9ism?",
+            type: "mcq",
+            options: ["a/ ma3dnousa", "b/ fticha", "c/ 7ad"],
+            correct: [0, 2] // a, c
+        },
+        {
+            question: "3/ chkoun dima yji retard?",
+            type: "text",
+            correct: null
+        },
+        {
+            question: "4/ chkoun bent fatma?",
+            type: "mcq",
+            options: ["a/ tasnime", "b/ nour", "c/ nourane"],
+            correct: [1] // b
+        },
+        {
+            question: "5/ chkoun a7senn prof(a) 9arek?",
+            type: "text",
+            correct: null
+        },
+        {
+            question: "6/ nour kenn jett jamadd ach tkoun?",
+            type: "mcq",
+            options: ["a/ taboureya", "b/ debouza fitox", "c/ charge"],
+            correct: [0, 1, 2] // a, b, c
+        },
+        {
+            question: "7/ chkoun li dima yelbess cha3che3i w jmi33 libsett rabi?",
+            type: "mcq",
+            options: ["a/ ma3dnousaa", "b/ ritejj", "c/ saja"],
+            correct: [2] // c
+        },
+        {
+            question: "8/ chkoun a9serr wa7da fi college?",
+            type: "mcq",
+            options: ["a/ tasnime", "b/ tasnime", "c/ tasnime"],
+            correct: [0, 1, 2] // a, b, c
+        },
+        {
+            question: "9/ chkouni lil awledd ekol y5afou منها?",
+            type: "mcq",
+            options: ["a/ selam", "b/ nourane", "c/ moudira"],
+            correct: [0, 2] // a, c
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let userAnswers = [];
+
+    const questionEl = document.getElementById('question');
+    const contentArea = document.getElementById('content-area');
+    const quizCard = document.getElementById('quiz-card');
+
+    function loadQuiz() {
+        const currentData = quizData[currentQuestion];
+        questionEl.innerText = currentData.question;
+        contentArea.innerHTML = '';
+
+        if (currentData.type === "mcq") {
+            const grid = document.createElement('div');
+            grid.classList.add('options-grid');
+            currentData.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.classList.add('btn-option');
+                button.innerText = option;
+                button.onclick = () => handleAnswer(option, index);
+                grid.appendChild(button);
+            });
+            contentArea.appendChild(grid);
+        } else {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = 'text-answer';
+            input.placeholder = 'اكتب الإجابة هنا...';
+            input.classList.add('input-box');
+
+            const btn = document.createElement('button');
+            btn.classList.add('btn-submit');
+            btn.innerText = 'التالي ➔';
+            btn.onclick = () => {
+                const val = document.getElementById('text-answer').value;
+                if (val.trim() !== '') {
+                    handleAnswer(val, null);
+                }
+            };
+
+            contentArea.appendChild(input);
+            contentArea.appendChild(btn);
+        }
+    }
+
+    function handleAnswer(answer, optionIndex) {
+        const currentData = quizData[currentQuestion];
+        let isCorrect = false;
+
+        if (currentData.type === "mcq" && currentData.correct.includes(optionIndex)) {
+            score++;
+            isCorrect = true;
+        }
+
+        userAnswers.push({
+            q: currentData.question,
+            a: answer,
+            isCorrect: isCorrect,
+            isText: currentData.type === "text"
+        });
+
+        currentQuestion++;
+
+        if (currentQuestion < quizData.length) {
+            loadQuiz();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        let answersHTML = userAnswers.map(item => {
+            let status = item.isText ? '📝' : (item.isCorrect ? '✅' : '❌');
+            return `<p><strong>${item.q}</strong><br>👉 ${item.a} ${status}</p>`;
+        }).join('');
+
+        quizCard.innerHTML = `
+            <h2>انتهى الاختبار! 🎉</h2>
+            <div class="score-box">النتيجة: ${score} / 7 🎯</div>
+            <div class="answers-list">${answersHTML}</div>
+            <button class="btn-submit" onclick="location.reload()">إعادة الاختبار 🔄</button>
+        `;
+    }
+
+    loadQuiz();
+</script>
+
+</body>
+</html>
